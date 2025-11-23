@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bot Detection Test Page</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .pass {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .fail {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        h1 {
+            color: #333;
+        }
+        h2 {
+            color: #555;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        pre {
+            background: #f4f4f4;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Bot Detection Test Suite</h1>
+    <p>This page tests various bot detection mechanisms to verify stealth implementation.</p>
+
+    <div class="test-section">
+        <h2>1. WebDriver Detection</h2>
+        <div id="webdriver-test"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>2. Chrome Runtime Detection</h2>
+        <div id="chrome-test"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>3. Navigator Properties</h2>
+        <div id="navigator-test"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>4. Plugin Detection</h2>
+        <div id="plugin-test"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>5. Canvas Fingerprinting</h2>
+        <div id="canvas-test"></div>
+        <button onclick="testCanvas()">Test Canvas</button>
+    </div>
+
+    <div class="test-section">
+        <h2>6. WebGL Fingerprinting</h2>
+        <div id="webgl-test"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>7. Automation Markers</h2>
+        <div id="automation-test"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>8. Popup Test</h2>
+        <button onclick="testPopup()">Open Popup Window</button>
+        <div id="popup-test"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>9. WebSocket Test</h2>
+        <button onclick="testWebSocket()">Test WebSocket</button>
+        <div id="websocket-test"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>10. Browser Fingerprint Summary</h2>
+        <div id="fingerprint-summary"></div>
+    </div>
+
+    <script>
+        // Test 1: WebDriver
+        function testWebDriver() {
+            const result = document.getElementById('webdriver-test');
+            if (navigator.webdriver === undefined) {
+                result.innerHTML = '<div class="test-result pass">✓ PASS: navigator.webdriver is undefined (stealth)</div>';
+            } else {
+                result.innerHTML = `<div class="test-result fail">✗ FAIL: navigator.webdriver = ${navigator.webdriver}</div>`;
+            }
+        }
+
+        // Test 2: Chrome
+        function testChrome() {
+            const result = document.getElementById('chrome-test');
+            if (window.chrome && Object.keys(window.chrome).length > 0) {
+                result.innerHTML = '<div class="test-result pass">✓ PASS: window.chrome exists with properties</div>';
+            } else {
+                result.innerHTML = '<div class="test-result fail">✗ FAIL: window.chrome missing or empty</div>';
+            }
+        }
+
+        // Test 3: Navigator
+        function testNavigator() {
+            const result = document.getElementById('navigator-test');
+            let html = '<div class="test-result info">';
+            html += `<strong>User Agent:</strong> ${navigator.userAgent}<br>`;
+            html += `<strong>Platform:</strong> ${navigator.platform}<br>`;
+            html += `<strong>Languages:</strong> ${navigator.languages.join(', ')}<br>`;
+            html += `<strong>Hardware Concurrency:</strong> ${navigator.hardwareConcurrency}<br>`;
+            html += `<strong>Device Memory:</strong> ${navigator.deviceMemory || 'N/A'}<br>`;
+            html += `<strong>Vendor:</strong> ${navigator.vendor}<br>`;
+            html += '</div>';
+
+            if (navigator.userAgent.includes('Chrome') && !navigator.userAgent.includes('Electron')) {
+                html += '<div class="test-result pass">✓ PASS: User agent looks normal (no Electron)</div>';
+            } else {
+                html += '<div class="test-result fail">✗ FAIL: User agent contains suspicious strings</div>';
+            }
+
+            result.innerHTML = html;
+        }
+
+        // Test 4: Plugins
+        function testPlugins() {
+            const result = document.getElementById('plugin-test');
+            let html = '<div class="test-result info">';
+            html += `<strong>Plugin Count:</strong> ${navigator.plugins.length}<br>`;
+            for (let i = 0; i < navigator.plugins.length; i++) {
+                html += `Plugin ${i + 1}: ${navigator.plugins[i].name}<br>`;
+            }
+            html += '</div>';
+
+            if (navigator.plugins.length > 0) {
+                html += '<div class="test-result pass">✓ PASS: Plugins detected</div>';
+            } else {
+                html += '<div class="test-result fail">✗ FAIL: No plugins (suspicious)</div>';
+            }
+
+            result.innerHTML = html;
+        }
+
+        // Test 5: Canvas
+        function testCanvas() {
+            const result = document.getElementById('canvas-test');
+            const canvas = document.createElement('canvas');
+            canvas.width = 200;
+            canvas.height = 50;
+            const ctx = canvas.getContext('2d');
+
+            ctx.textBaseline = 'top';
+            ctx.font = '14px Arial';
+            ctx.textBaseline = 'alphabetic';
+            ctx.fillStyle = '#f60';
+            ctx.fillRect(125, 1, 62, 20);
+            ctx.fillStyle = '#069';
+            ctx.fillText('Canvas fingerprint test 🎨', 2, 15);
+            ctx.fillStyle = 'rgba(102, 204, 0, 0.7)';
+            ctx.fillText('Canvas fingerprint test 🎨', 4, 17);
+
+            const dataURL = canvas.toDataURL();
+            const hash = simpleHash(dataURL);
+
+            result.innerHTML = `
+                <div class="test-result info">
+                    <strong>Canvas Hash:</strong> ${hash}<br>
+                    <img src="${dataURL}" alt="Canvas test">
+                </div>
+                <div class="test-result pass">✓ Canvas rendering works</div>
+            `;
+        }
+
+        function simpleHash(str) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                const char = str.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash;
+            }
+            return hash.toString(16);
+        }
+
+        // Test 6: WebGL
+        function testWebGL() {
+            const result = document.getElementById('webgl-test');
+            const canvas = document.createElement('canvas');
+            const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+
+            if (gl) {
+                const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+                let vendor = 'Unknown';
+                let renderer = 'Unknown';
+
+                if (debugInfo) {
+                    vendor = gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL);
+                    renderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+                }
+
+                result.innerHTML = `
+                    <div class="test-result info">
+                        <strong>Vendor:</strong> ${vendor}<br>
+                        <strong>Renderer:</strong> ${renderer}
+                    </div>
+                    <div class="test-result pass">✓ PASS: WebGL is available</div>
+                `;
+            } else {
+                result.innerHTML = '<div class="test-result fail">✗ FAIL: WebGL not available</div>';
+            }
+        }
+
+        // Test 7: Automation markers
+        function testAutomationMarkers() {
+            const result = document.getElementById('automation-test');
+            const markers = [
+                '__webdriver_evaluate',
+                '__selenium_evaluate',
+                '__webdriver_script_function',
+                '__driver_evaluate',
+                '_selenium',
+                'calledSelenium',
+                'cdc_adoQpoasnfa76pfcZLmcfl_Array',
+                '$chrome_asyncScriptInfo',
+                '__$webdriverAsyncExecutor'
+            ];
+
+            let foundMarkers = [];
+            markers.forEach(marker => {
+                if (window[marker] !== undefined) {
+                    foundMarkers.push(marker);
+                }
+            });
+
+            if (foundMarkers.length === 0) {
+                result.innerHTML = '<div class="test-result pass">✓ PASS: No automation markers found</div>';
+            } else {
+                result.innerHTML = `<div class="test-result fail">✗ FAIL: Found markers: ${foundMarkers.join(', ')}</div>`;
+            }
+        }
+
+        // Test 8: Popup
+        function testPopup() {
+            const result = document.getElementById('popup-test');
+            try {
+                const popup = window.open('about:blank', '_blank', 'width=600,height=400');
+                if (popup) {
+                    popup.document.write('<h1>Popup Test Success!</h1><p>This popup was opened successfully.</p>');
+                    result.innerHTML = '<div class="test-result pass">✓ PASS: Popup opened successfully</div>';
+                    setTimeout(() => popup.close(), 3000);
+                } else {
+                    result.innerHTML = '<div class="test-result fail">✗ FAIL: Popup blocked</div>';
+                }
+            } catch (e) {
+                result.innerHTML = `<div class="test-result fail">✗ FAIL: ${e.message}</div>`;
+            }
+        }
+
+        // Test 9: WebSocket
+        function testWebSocket() {
+            const result = document.getElementById('websocket-test');
+            try {
+                // Test with a public WebSocket echo server
+                const ws = new WebSocket('wss://echo.websocket.org/');
+
+                ws.onopen = function() {
+                    result.innerHTML = '<div class="test-result pass">✓ PASS: WebSocket connection opened</div>';
+                    ws.send('Test message');
+                };
+
+                ws.onmessage = function(event) {
+                    result.innerHTML += `<div class="test-result pass">✓ PASS: Received: ${event.data}</div>`;
+                    ws.close();
+                };
+
+                ws.onerror = function(error) {
+                    result.innerHTML = `<div class="test-result fail">✗ FAIL: WebSocket error</div>`;
+                };
+
+                ws.onclose = function() {
+                    result.innerHTML += '<div class="test-result info">WebSocket connection closed</div>';
+                };
+            } catch (e) {
+                result.innerHTML = `<div class="test-result fail">✗ FAIL: ${e.message}</div>`;
+            }
+        }
+
+        // Test 10: Fingerprint summary
+        function generateFingerprint() {
+            const result = document.getElementById('fingerprint-summary');
+            const fingerprint = {
+                userAgent: navigator.userAgent,
+                platform: navigator.platform,
+                language: navigator.language,
+                languages: navigator.languages,
+                hardwareConcurrency: navigator.hardwareConcurrency,
+                deviceMemory: navigator.deviceMemory,
+                screen: {
+                    width: screen.width,
+                    height: screen.height,
+                    colorDepth: screen.colorDepth,
+                    pixelDepth: screen.pixelDepth
+                },
+                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                timezoneOffset: new Date().getTimezoneOffset(),
+                hasWebDriver: navigator.webdriver,
+                hasChrome: !!window.chrome,
+                plugins: navigator.plugins.length
+            };
+
+            result.innerHTML = '<div class="test-result info"><pre>' +
+                JSON.stringify(fingerprint, null, 2) +
+                '</pre></div>';
+        }
+
+        // Run all tests on page load
+        window.onload = function() {
+            testWebDriver();
+            testChrome();
+            testNavigator();
+            testPlugins();
+            testWebGL();
+            testAutomationMarkers();
+            generateFingerprint();
+        };
+    </script>
+</body>
+</html>
